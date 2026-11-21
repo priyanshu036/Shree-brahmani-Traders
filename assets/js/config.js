@@ -33,7 +33,7 @@
     /* Google Apps Script Web App URL.
        This is the deployed /exec endpoint that stores all data in Google Sheets.
        Leave empty to work fully offline with LocalStorage only. */
-    apiUrl: "https://script.google.com/macros/s/AKfycbwe-nLPFnK65GbcAFaGlhIh7iKUB-5j2foLj2Te3uvwKgcbYVuNzYvGm8opGTeR7iM/exec",
+    apiUrl: "https://script.google.com/macros/library/d/1-vCucr5GQ4tmwx04vyJwGOrMiSI5gXZ3gcarRfjM83_ekiQeHuyOncBn/4",
 
     /* Master material list (editable in Settings) */
     defaultProducts: [
