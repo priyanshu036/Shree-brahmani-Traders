@@ -31,8 +31,12 @@ Sheets** through a Google Apps Script Web App.
 There is **no build step** and **no server required**.
 
 1. Open the project folder.
-2. Double-click **`login.html`** (or right-click → Open with → your browser).
+2. Double-click **`index.html`** (or right-click → Open with → your browser).
 3. Sign in with the credentials below.
+
+> `login.html` is kept as a redirect to `index.html` so older links keep working.
+> On GitHub Pages the site is served from the repository root, so `index.html`
+> is the entry point.
 
 > The app works immediately using browser LocalStorage. To persist data to
 > Google Sheets, complete the [Google Sheets Setup](#google-sheets-setup-critical)
@@ -132,7 +136,8 @@ numeric-looking ids as numbers.
 ```
 Shree brahmani Traders/
 │
-├── login.html                  Login page (white + green theme)
+├── index.html                  Login page (bilingual entry point)
+├── login.html                  Redirect to index.html (legacy links)
 ├── dashboard.html              Overview
 ├── purchases.html              Purchase entries
 ├── sales.html                  Sales entries

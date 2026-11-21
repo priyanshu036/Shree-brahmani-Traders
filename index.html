@@ -431,6 +431,48 @@
       color: var(--muted);
     }
 
+    /* ---------- Language switch ---------- */
+    .lang-switch {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.1rem;
+      display: inline-flex;
+      padding: 2px;
+      gap: 2px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+    }
+
+    .lang-switch button {
+      min-width: 34px;
+      padding: 0.24rem 0.5rem;
+      font-family: inherit;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-soft);
+      background: transparent;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .lang-switch button:hover {
+      color: var(--navy-700);
+    }
+
+    .lang-switch button.is-active {
+      color: var(--white);
+      background: var(--navy-600);
+    }
+
+    .lang-switch button:focus-visible {
+      outline: 2px solid var(--navy-500);
+      outline-offset: 2px;
+    }
+
     /* ---------- Responsive ---------- */
     @media (max-width: 460px) {
       body {
@@ -473,17 +515,22 @@
 </head>
 <body>
   <main class="login-card">
+    <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="gu">ગુ</button>
+    </div>
+
     <div class="brand">
       <img src="assets/img/logo.svg" alt="Shree Brahmani Traders"
            onerror="this.style.display='none';this.parentNode.textContent='SHREE BRAHMANI TRADERS';this.parentNode.style.color='#123f69';this.parentNode.style.fontWeight='800';this.parentNode.style.fontSize='1rem';this.parentNode.style.letterSpacing='0.04em';" />
     </div>
 
-    <h1>Welcome back</h1>
-    <p class="login-card__sub">Sign in to continue to your dashboard.</p>
+    <h1 data-i18n="auth.welcome">Welcome back</h1>
+    <p class="login-card__sub" data-i18n="auth.subtitle">Sign in to continue to your dashboard.</p>
 
     <form id="loginForm" novalidate>
       <div class="field">
-        <label for="username">Username</label>
+        <label for="username" data-i18n="auth.username">Username</label>
         <div class="input-wrap" id="usernameWrap">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -495,6 +542,7 @@
             name="username"
             type="text"
             placeholder="Enter your username"
+            data-i18n-placeholder="auth.usernamePlaceholder"
             autocomplete="username"
             spellcheck="false"
             autocapitalize="none"
@@ -504,7 +552,7 @@
       </div>
 
       <div class="field">
-        <label for="password">Password</label>
+        <label for="password" data-i18n="auth.password">Password</label>
         <div class="input-wrap" id="passwordWrap">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -516,10 +564,12 @@
             name="password"
             type="password"
             placeholder="Enter your password"
+            data-i18n-placeholder="auth.passwordPlaceholder"
             autocomplete="current-password"
             required
           />
-          <button type="button" class="toggle" id="togglePassword" aria-label="Show password" aria-pressed="false">
+          <button type="button" class="toggle" id="togglePassword" aria-label="Show password"
+                  data-i18n-aria="auth.showPassword" aria-pressed="false">
             <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -532,29 +582,39 @@
       <div class="row">
         <label class="checkbox">
           <input type="checkbox" id="remember" />
-          <span>Remember me</span>
+          <span data-i18n="auth.remember">Remember me</span>
         </label>
-        <a href="#" class="link" id="forgotLink">Forgot password?</a>
+        <a href="#" class="link" id="forgotLink" data-i18n="auth.forgot">Forgot password?</a>
       </div>
 
       <p class="message" id="message" role="alert" aria-live="polite"></p>
 
       <button type="submit" class="btn" id="submitBtn">
         <span class="spinner" aria-hidden="true"></span>
-        <span class="btn-text">Sign In</span>
+        <span class="btn-text" data-i18n="auth.signIn">Sign In</span>
       </button>
     </form>
 
-    <p class="login-card__foot">&copy; 2026 Shree Brahmani Traders. All rights reserved.</p>
+    <p class="login-card__foot" data-i18n="auth.footer">&copy; 2026 Shree Brahmani Traders. All rights reserved.</p>
   </main>
 
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/i18n.js"></script>
   <script>
     (function () {
       "use strict";
 
-      /* ===== Fixed credentials ===== */
-      const VALID_USERNAME = "admin";
-      const VALID_PASSWORD = "admin";
+      const I18N = (window.SBT && window.SBT.i18n) || null;
+
+      function t(key) {
+        return I18N ? I18N.t(key) : key;
+      }
+
+      /* ===== Fixed credentials (kept in sync with SBT.config.auth) ===== */
+      const CFG_AUTH = (window.SBT && window.SBT.config && window.SBT.config.auth) || {};
+      const VALID_USERNAME = CFG_AUTH.username || "admin";
+      const VALID_PASSWORD = CFG_AUTH.password || "admin";
+      const SESSION_KEY = CFG_AUTH.sessionKey || "sbt_v1_session";
 
       const form = document.getElementById("loginForm");
       const usernameInput = document.getElementById("username");
@@ -568,6 +628,7 @@
       const btnText = submitBtn.querySelector(".btn-text");
       const rememberBox = document.getElementById("remember");
       const forgotLink = document.getElementById("forgotLink");
+      const langSwitch = document.getElementById("langSwitch");
 
       const EYE_OPEN =
         '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
@@ -590,7 +651,9 @@
       /* ===== Helpers ===== */
       function showMessage(type, text) {
         messageEl.className = "message show " + type;
-        messageEl.innerHTML = (type === "error" ? ICON_ERROR : ICON_SUCCESS) + "<span>" + text + "</span>";
+        messageEl.innerHTML = (type === "error" ? ICON_ERROR : ICON_SUCCESS) +
+          "<span></span>";
+        messageEl.lastChild.textContent = text;
       }
 
       function clearMessage() {
@@ -617,15 +680,52 @@
       function setLoading(isLoading) {
         submitBtn.classList.toggle("loading", isLoading);
         submitBtn.disabled = isLoading;
-        btnText.textContent = isLoading ? "Signing in…" : "Sign In";
+        btnText.textContent = isLoading ? t("auth.signingIn") : t("auth.signIn");
       }
+
+      /* ===== Language switch ===== */
+      function paintLangSwitch() {
+        if (!langSwitch) return;
+        const active = I18N ? I18N.lang() : "en";
+        Array.prototype.slice.call(langSwitch.querySelectorAll("button")).forEach(function (btn) {
+          const on = btn.getAttribute("data-lang") === active;
+          btn.classList.toggle("is-active", on);
+          btn.setAttribute("aria-pressed", String(on));
+        });
+      }
+
+      function applyLanguage() {
+        if (I18N) I18N.apply(document);
+        document.title = t("auth.title");
+        const desc = document.querySelector('meta[name="description"]');
+        if (desc) desc.setAttribute("content", t("auth.description"));
+        document.documentElement.lang = I18N ? I18N.lang() : "en";
+        paintLangSwitch();
+        /* Keep the button label in sync with the current state. */
+        if (!submitBtn.classList.contains("loading")) {
+          btnText.textContent = submitBtn.classList.contains("success")
+            ? t("auth.signedIn")
+            : t("auth.signIn");
+        }
+      }
+
+      if (langSwitch) {
+        langSwitch.addEventListener("click", function (event) {
+          const btn = event.target.closest("button[data-lang]");
+          if (!btn || !I18N) return;
+          I18N.setLang(btn.getAttribute("data-lang"));
+          applyLanguage();
+        });
+      }
+
+      applyLanguage();
 
       /* ===== Password visibility toggle ===== */
       toggleBtn.addEventListener("click", function () {
         const isHidden = passwordInput.type === "password";
         passwordInput.type = isHidden ? "text" : "password";
         eyeIcon.innerHTML = isHidden ? EYE_OFF : EYE_OPEN;
-        toggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+        toggleBtn.setAttribute("aria-label", t(isHidden ? "auth.hidePassword" : "auth.showPassword"));
         toggleBtn.setAttribute("aria-pressed", String(isHidden));
         passwordInput.focus();
       });
@@ -655,7 +755,7 @@
       /* ===== Forgot password ===== */
       forgotLink.addEventListener("click", function (event) {
         event.preventDefault();
-        showMessage("error", "Please contact the administrator to reset your password.");
+        showMessage("error", t("auth.forgotMsg"));
       });
 
       /* ===== Submit ===== */
@@ -672,7 +772,7 @@
         if (!username && !password) {
           markInvalid(usernameWrap, usernameInput);
           markInvalid(passwordWrap, passwordInput);
-          showMessage("error", "Please enter your username and password.");
+          showMessage("error", t("auth.errBoth"));
           shake(form);
           usernameInput.focus();
           return;
@@ -680,7 +780,7 @@
 
         if (!username) {
           markInvalid(usernameWrap, usernameInput);
-          showMessage("error", "Please enter your username.");
+          showMessage("error", t("auth.errUsername"));
           shake(usernameWrap);
           usernameInput.focus();
           return;
@@ -688,7 +788,7 @@
 
         if (!password) {
           markInvalid(passwordWrap, passwordInput);
-          showMessage("error", "Please enter your password.");
+          showMessage("error", t("auth.errPassword"));
           shake(passwordWrap);
           passwordInput.focus();
           return;
@@ -697,7 +797,7 @@
         if (username !== VALID_USERNAME || password !== VALID_PASSWORD) {
           markInvalid(usernameWrap, usernameInput);
           markInvalid(passwordWrap, passwordInput);
-          showMessage("error", "Invalid username or password. Please try again.");
+          showMessage("error", t("auth.errInvalid"));
           shake(form);
           passwordInput.select();
           return;
@@ -714,9 +814,9 @@
           }
 
           /* Session shape must match SBT.app.login() in assets/js/app.js */
-          localStorage.setItem("sbt_v1_session", JSON.stringify({
+          localStorage.setItem(SESSION_KEY, JSON.stringify({
             user: username,
-            name: "Administrator",
+            name: t("shell.administrator"),
             loginAt: Date.now(),
             expires: Date.now() + (rememberBox.checked
               ? 30 * 24 * 3600 * 1000
@@ -729,8 +829,8 @@
         setTimeout(function () {
           setLoading(false);
           submitBtn.classList.add("success");
-          btnText.textContent = "Signed in ✓";
-          showMessage("success", "Login successful! Redirecting…");
+          btnText.textContent = t("auth.signedIn");
+          showMessage("success", t("auth.success"));
 
           setTimeout(function () {
             window.location.href = "dashboard.html";

@@ -53,12 +53,12 @@
     try {
       localStorage.removeItem(CFG.auth.sessionKey);
     } catch (e) { /* ignore */ }
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   };
 
   App.requireAuth = function () {
     if (!App.isLoggedIn()) {
-      window.location.replace("login.html");
+      window.location.replace("index.html");
       return false;
     }
     return true;
